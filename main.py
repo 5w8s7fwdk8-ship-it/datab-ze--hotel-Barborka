@@ -27,13 +27,20 @@ class BarborkaDB:
         for row in cursor:
             print(f"ID: {row[0]} | Jméno: {row[1]} | Email: {row[2]}")
 
-# --- Hlavní logika programu ---
+    def find_guests_by_email_provider(self, provider):
+        """Vyhledá hosty podle poskytovatele emailu (ukázka SQL LIKE)."""
+        query = "SELECT * FROM guests WHERE email LIKE ?"
+        cursor = self.conn.execute(query, (f'%{provider}%',))
+        print(f"\nHosté s emailem u {provider}:")
+        for row in cursor:
+            print(f"- {row[1]} ({row[2]})")
+
 if __name__ == "__main__":
     db = BarborkaDB()
     
-    # Ukázka přidání hosta (např. po kampani na cyklisty)
-    new_guest = Guest("Jan Novák", "jan.novak@email.cz")
-    db.add_guest(new_guest)
+    # Přidáme testovací data
+    db.add_guest(Guest("Jan Novák", "jan.novak@gmail.com"))
+    db.add_guest(Guest("Petr Kolář", "petr@seznam.cz"))
     
-    print("\nAktuální seznam hostů v hotelu Barborka:")
-    db.show_all_guests()
+    # Ukázka použití nové metody
+    db.find_guests_by_email_provider("gmail")
